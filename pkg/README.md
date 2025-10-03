@@ -8,4 +8,4 @@
 - общие модели данных
 - клиентские SDK
 
-Protocol Buffers (Protobuf) будет изучаться дальше по курсу.
+Protocol Buffers (Protobuf)
