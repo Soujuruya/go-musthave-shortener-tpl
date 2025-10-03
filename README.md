@@ -57,7 +57,7 @@ Content-Type: text/plain
 ```bash
     curl -i -X POST http://localhost:8080/ \
      -H "Content-Type: text/plain" \
-     -d "https://practicum.yandex.ru/"
+     -d "https://example.com/"
 ```
 Ответ:
 
@@ -85,7 +85,7 @@ curl -i http://localhost:8080/Hqn0PQ
 Ответ:
 ```bash
 HTTP/1.1 307 Temporary Redirect
-Location: https://practicum.yandex.ru/
+Location: https://example.com/
 ```
 
 ## Структура кода
