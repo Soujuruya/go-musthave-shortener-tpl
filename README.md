@@ -1,44 +1,114 @@
-# go-musthave-shortener-tpl
+# URL Shortener
 
-Шаблон репозитория для трека «Сервис сокращения URL».
+Простой сервис для сокращения URL на Go с возможностью редиректа по короткой ссылке.
 
-## Начало работы
-
-1. Склонируйте репозиторий в любую подходящую директорию на вашем компьютере.
-2. В корне репозитория выполните команду `go mod init <name>` (где `<name>` — адрес вашего репозитория на GitHub без префикса `https://`) для создания модуля.
-
-## Обновление шаблона
-
-Чтобы иметь возможность получать обновления автотестов и других частей шаблона, выполните команду:
-
-```
-git remote add -m v2 template https://github.com/Yandex-Practicum/go-musthave-shortener-tpl.git
-```
-
-Для обновления кода автотестов выполните команду:
-
-```
-git fetch template && git checkout template/v2 .github
-```
-
-Затем добавьте полученные изменения в свой репозиторий.
-
-## Запуск автотестов
-
-Для успешного запуска автотестов называйте ветки `iter<number>`, где `<number>` — порядковый номер инкремента. Например, в ветке с названием `iter4` запустятся автотесты для инкрементов с первого по четвёртый.
-
-При мёрже ветки с инкрементом в основную ветку `main` будут запускаться все автотесты.
-
-Подробнее про локальный и автоматический запуск читайте в [README автотестов](https://github.com/Yandex-Practicum/go-autotests).
+---
 
 ## Структура проекта
 
-Приведённая в этом репозитории структура проекта является рекомендуемой, но не обязательной.
+.
+├── cmd/
+│ └── shortener # основной бинарник сервера
+├── internal/
+│ ├── app/ # инициализация приложения
+│ ├── handler/ # HTTP-хендлеры
+│ ├── router/ # маршрутизация
+│ ├── service/ # бизнес-логика (URLService)
+│ ├── repository/ # хранилище URL (MemoryURLRepo)
+│ └── model/ # структуры данных
+├── README.md
+├── shortenertest # бинарник автотестов
+---
 
-Это лишь пример организации кода, который поможет вам в реализации сервиса.
+## Установка и сборка
 
-При необходимости можно вносить изменения в структуру проекта, использовать любые библиотеки и предпочитаемые структурные паттерны организации кода приложения, например:
-- **DDD** (Domain-Driven Design)
-- **Clean Architecture**
-- **Hexagonal Architecture**
-- **Layered Architecture**
+1. Клонируем проект:
+
+```bash
+git clone <URL_твоего_репозитория>
+cd go-musthave-shortener-tpl/cmd/shortener
+```
+2. Сборка сервера:
+```bash
+go build -o shortener
+```
+3. Проверяем права на выполнение:
+```bash
+chmod +x shortener
+```
+Запуск сервера
+```bash
+./shortener
+```
+Сервер слушает http://localhost:8080.
+
+## API
+
+1. Сокращение URL (POST /)
+
+Content-Type: text/plain
+
+Тело запроса: исходный URL
+
+Ответ: 201 Created, короткий URL в теле (text/plain)
+
+Пример:
+```bash
+    curl -i -X POST http://localhost:8080/ \
+     -H "Content-Type: text/plain" \
+     -d "https://practicum.yandex.ru/"
+```
+Ответ:
+
+```bash
+HTTP/1.1 201 Created
+Content-Type: text/plain
+http://localhost:8080/Hqn0PQ
+```
+
+2. Редирект по короткому URL (GET /{id})
+
+Метод: GET
+
+Путь: /EwHXdJfB — идентификатор короткой ссылки
+
+Ответ: 307 Temporary Redirect
+
+Location: оригинальный URL
+
+Пример:
+
+```bash
+curl -i http://localhost:8080/Hqn0PQ
+```
+Ответ:
+```bash
+HTTP/1.1 307 Temporary Redirect
+Location: https://practicum.yandex.ru/
+```
+
+## Структура кода
+
+App — инициализация сервисов и репозитория.
+
+Router — настройка маршрутов и http.Server.
+
+URLService — бизнес-логика, генерация короткого ID и получение оригинального URL.
+
+MemoryURLRepo — хранение URL в памяти (map).
+
+ShortenHandler — обработка POST-запросов.
+
+RedirectUrlHandler — обработка GET-запросов.
+
+## Тестирование
+
+1. Сборка автотестов:
+```bash
+chmod +x shortenertest
+```
+
+2. Запуск теста первой итерации:
+```bash
+./shortenertest -test.v -test.run='^TestIteration1$' -binary-path=./shortener
+```
