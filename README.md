@@ -26,7 +26,7 @@
 1. Клонируем проект:
 
 ```bash
-git clone <URL_твоего_репозитория>
+git clone https://github.com/Soujuruya/go-musthave-shortener-tpl.git
 cd go-musthave-shortener-tpl/cmd/shortener
 ```
 2. Сборка сервера:
